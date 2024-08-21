@@ -43,7 +43,10 @@ _Below is an example of how you can setup up your app._
    ```sh 
    http://localhost:3000
    ```
-<p align="left">(<a href="[#readme-top](https://api.postman.com/collections/18262875-955633cf-4908-4129-b90c-e76574fcab18?access_key=PMAT-01J5TG01K0PW5RFCEJ86FMBT8W)">Postman Collection</a>)</p>
+Postman collection [Postman](https://api.postman.com/collections/18262875-955633cf-4908-4129-b90c-e76574fcab18?access_key=PMAT-01J5TG01K0PW5RFCEJ86FMBT8W).
+
+
+
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
