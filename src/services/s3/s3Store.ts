@@ -1,4 +1,8 @@
-import {s3Interface, s3GetInterface, s3DeleteInterface} from '../../utils/interface/s3/IS3';
+import {
+  s3Interface,
+  s3GetInterface,
+  s3DeleteInterface
+} from '../../utils/interface/s3/IS3';
 import { UserDocumentModel } from '../../models/userDocuments';
 export default class S3Store {
   public static OPERATION_UNSUCCESSFUL = class extends Error {
@@ -17,40 +21,39 @@ export default class S3Store {
   }
 
   public async getFiles(data: s3GetInterface): Promise<s3Interface[]> {
-	const {document_type, user_id}= data;
+    const { document_type, user_id } = data;
     try {
-	  let queryObj:any = {user_id}
-	  if(document_type){
-			queryObj.document_type = document_type
-	  }
-     return await UserDocumentModel.find(queryObj);
+      const queryObj: any = { user_id };
+      if (document_type) {
+        queryObj.document_type = document_type;
+      }
+      return await UserDocumentModel.find(queryObj);
     } catch (error) {
       return error;
     }
   }
 
   public async getById(data: s3GetInterface): Promise<s3Interface> {
-	const {document_id, user_id}= data;
+    const { document_id, user_id } = data;
     try {
-	  let queryObj:any = {user_id,_id:document_id}
-     return await UserDocumentModel.findOne(queryObj);
-    }
-     catch (error) {
+      const queryObj: any = { user_id, _id: document_id };
+      return await UserDocumentModel.findOne(queryObj);
+    } catch (error) {
       return error;
     }
   }
 
   public async delete(data: s3DeleteInterface): Promise<s3Interface> {
-    const {document_id, user_id}= data;
-      try {
-      let queryObj:any = {user_id,_id:document_id}
-      let updateObj:any = {status:2}
-  
-       return await UserDocumentModel.findOneAndUpdate(queryObj, updateObj, {new:true});
-      } catch (error) {
-        return error;
-      }
+    const { document_id, user_id } = data;
+    try {
+      const queryObj: any = { user_id, _id: document_id };
+      const updateObj: any = { status: 2 };
+
+      return await UserDocumentModel.findOneAndUpdate(queryObj, updateObj, {
+        new: true
+      });
+    } catch (error) {
+      return error;
     }
-
-
+  }
 }

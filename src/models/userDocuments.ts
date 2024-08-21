@@ -1,32 +1,35 @@
-import mongoose, { model } from "mongoose";
-import userDocumentInterface from "../utils/interface/store/userDocument";
-import Status from "../utils/enum/status";
+import mongoose, { model } from 'mongoose';
+import userDocumentInterface from '../utils/interface/store/userDocument';
+import Status from '../utils/enum/status';
 const schema = mongoose.Schema;
-const userDocumentSchema = new schema<userDocumentInterface>({
+const userDocumentSchema = new schema<userDocumentInterface>(
+  {
     user_id: {
-        type: schema.Types.ObjectId,
-        ref: "users"
+      type: schema.Types.ObjectId,
+      ref: 'users'
     },
     filepath: {
-        type: String
+      type: String
     },
     upload_date: {
-        type: String
+      type: String
     },
     filesize: {
-        type: String
+      type: String
     },
     document_type: {
-        type: String
+      type: String
     },
     mimetype: {
-        type: String
+      type: String
     },
     status: {
-        type: Number,
-        default: Status.ACTIVE,
-        enum: [Status.ACTIVE, Status.INACTIVE, Status.DELETED]
+      type: Number,
+      default: Status.ACTIVE,
+      enum: [Status.ACTIVE, Status.INACTIVE, Status.DELETED]
     }
-}, {timestamps: true});
+  },
+  { timestamps: true }
+);
 
-export const UserDocumentModel = model("userDocuments", userDocumentSchema);
+export const UserDocumentModel = model('userDocuments', userDocumentSchema);

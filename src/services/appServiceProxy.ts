@@ -1,11 +1,11 @@
-import * as IUserService from "./user/IUserService";
-import UserService from "./user/userService";
+import * as IUserService from './user/IUserService';
+import UserService from './user/userService';
 
-import * as IAuthService from "./auth/IAuthService";
-import AuthService from "./auth/authService";
+import * as IAuthService from './auth/IAuthService';
+import AuthService from './auth/authService';
 
-import * as IS3Service from "./s3/IS3Service";
-import S3Service from "./s3/s3Service";
+import * as IS3Service from './s3/IS3Service';
+import S3Service from './s3/s3Service';
 
 export interface IAppServiceProxy {
   auth: IAuthService.IAuthServiceAPI;
