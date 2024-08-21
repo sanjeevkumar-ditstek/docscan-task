@@ -11,7 +11,6 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 export default class AuthService implements IAuthService.IAuthServiceAPI {
-  // private roleStore = new RoleStore();
   private proxy: IAppServiceProxy;
 
   constructor(proxy: IAppServiceProxy) {

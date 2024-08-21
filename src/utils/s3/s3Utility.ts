@@ -40,7 +40,7 @@ export const checkS3FolderSize = async (path, fileSize) => {
   try {
     let totalSize = 0;
     let continuationToken = null;
-    const maxBytes = 1073741824; // Bytes in 1GB
+    const maxBytes = Number(process.env.S3_STORAGE_LIMIT) || 1073741824; // Bytes in 1GB
     do {
       const params = {
         Bucket: BUCKET_NAME,

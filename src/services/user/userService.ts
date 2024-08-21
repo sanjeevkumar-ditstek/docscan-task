@@ -64,7 +64,7 @@ export default class UserService implements IUserService.IUserServiceAPI {
     let existingUser: IUSER;
     try {
       existingUser = await this.userStore.getByEmail(email);
-      //Error if email id is already exist
+      //Return error resposne  if email id is already exist
       if (existingUser && existingUser?.email) {
         response.statusCode = STATUS_CODES.BAD_REQUEST;
         response.message = ErrorMessageEnum.EMAIL_ALREADY_EXIST;
@@ -73,7 +73,7 @@ export default class UserService implements IUserService.IUserServiceAPI {
         response.error = toError(ErrorMessageEnum.EMAIL_ALREADY_EXIST);
         return apiResponse(response);
       }
-    } catch (e) {
+      } catch (e) {
       console.error(e);
       response.statusCode = STATUS_CODES.INTERNAL_SERVER_ERROR;
       response.message = ErrorMessageEnum.INTERNAL_ERROR;
@@ -83,6 +83,7 @@ export default class UserService implements IUserService.IUserServiceAPI {
       return apiResponse(response);
     }
 
+    //Hash the password and create new user
     let user: IUSER;
     try {
       const hashPassword = await bcrypt.hash(password, 10);
@@ -146,9 +147,6 @@ export default class UserService implements IUserService.IUserServiceAPI {
     }
   };
 
-  /**
-   * Get user by Id
-   */
   public getUserById = async (
     request: IUserService.IGetUserRequest,
     res: IUserService.IGetUserResponse

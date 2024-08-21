@@ -11,7 +11,7 @@ const userRoute = async (app: any) => {
     userRoutes.UserProfileByTokenRoute,
     proxy.auth.authenticate,
     proxy.user.getUserByToken
-  );
+  ); //Get user by Token
   app.post(userRoutes.UserLoginRoute, proxy.user.loginUser); // Login user
 };
 

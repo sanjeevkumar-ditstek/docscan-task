@@ -1,27 +1,29 @@
-import S3Store from './s3Store';
-import { s3Interface } from '../../utils/interface/s3/IS3';
-import STATUS_CODES from '../../utils/enum/statusCodes';
-import ErrorMessageEnum from '../../utils/enum/errorMessage';
-import responseMessage from '../../utils/enum/responseMessage';
-import * as IS3Service from './IS3Service';
-import { IAppServiceProxy } from '../appServiceProxy';
-import { IApiResponse, toError } from '../../utils/interface/common';
-import { apiResponse } from '../../helper/apiResponses';
-import {
-  createSchema,
-  getSchema,
-  deleteSchema,
-  getParsedFileSchema
-} from '../../utils/common/joiSchema/s3/s3Schema';
-import { JoiError } from '../../helper/joiErrorHandler';
-import { JoiValidate } from '../../helper/JoiValidate';
-import {
-  uploadToS3,
-  checkS3FolderSize,
-  generatePresignedUrl,
-  deleteFromS3,
-  getParsedFile
-} from '../../utils/s3/s3Utility';
+import S3Store from "./s3Store";
+import {s3Interface} from "../../utils/interface/s3/IS3";
+import STATUS_CODES from "../../utils/enum/statusCodes";
+import ErrorMessageEnum from "../../utils/enum/errorMessage";
+import responseMessage from "../../utils/enum/responseMessage";
+import * as IS3Service from "./IS3Service";
+import { IAppServiceProxy } from "../appServiceProxy";
+import { IApiResponse, toError } from "../../utils/interface/common";
+import { apiResponse } from "../../helper/apiResponses";
+import { createSchema, getSchema , deleteSchema, getParsedFileSchema } from "../../utils/common/joiSchema/s3/s3Schema";
+import { JoiError } from "../../helper/joiErrorHandler";
+import { JoiValidate } from "../../helper/JoiValidate";
+import { uploadToS3, checkS3FolderSize, generatePresignedUrl, deleteFromS3, getParsedFile } from "../../utils/s3/s3Utility";
+import AWS from 'aws-sdk';
+
+// Configure AWS SDK with your credentials
+AWS.config.update({
+  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+  secretAccessKey: process.env.AWS_SECRET_KEY,
+  region: process.env.AWS_REGION,
+});
+
+// Create an S3 instance
+const s3 = new AWS.S3();
+
+
 
 export default class S3Service implements IS3Service.IS3ServiceAPI {
   private s3Store = new S3Store();
@@ -34,8 +36,8 @@ export default class S3Service implements IS3Service.IS3ServiceAPI {
   public uploadFile = async (req: IS3Service.IUploadRequest, res: unknown) => {
     const response: IApiResponse = {
       response: res,
-      statusCode: STATUS_CODES.UNKNOWN_CODE,
-      message: responseMessage.INVALID_EMAIL_OR_CODE,
+      statusCode: STATUS_CODES.INTERNAL_SERVER_ERROR,
+      message: ErrorMessageEnum.INTERNAL_ERROR,
       data: null,
       status: false
     };
@@ -99,7 +101,7 @@ export default class S3Service implements IS3Service.IS3ServiceAPI {
       return apiResponse(response);
     }
   };
-  public getFiles = async (req: IS3Service.IGetFilesRequest, res: unknown) => {
+  public getFiles = async (req: IS3Service.IGetFilesRequest, res: IApiResponse) => {
     const response: IApiResponse = {
       response: res,
       statusCode: STATUS_CODES.INTERNAL_SERVER_ERROR,
@@ -124,14 +126,6 @@ export default class S3Service implements IS3Service.IS3ServiceAPI {
         user_id: req.user._id
       };
       const result: s3Interface[] = await this.s3Store.getFiles(payload);
-      const filename = result[0].filepath;
-
-      // Get presigned url of images
-      for (let index = 0; index < result.length; index++) {
-        const element = result[index];
-        const presignedUrl = await generatePresignedUrl(element?.filepath);
-        element.filepath = presignedUrl;
-      }
 
       response.statusCode = STATUS_CODES.OK;
       response.message = responseMessage.FILE_FETCHED;
@@ -155,8 +149,8 @@ export default class S3Service implements IS3Service.IS3ServiceAPI {
   ) => {
     const response: IApiResponse = {
       response: res,
-      statusCode: STATUS_CODES.UNKNOWN_CODE,
-      message: responseMessage.INVALID_EMAIL_OR_CODE,
+      statusCode: STATUS_CODES.INTERNAL_SERVER_ERROR,
+      message: ErrorMessageEnum.INTERNAL_ERROR,
       data: null,
       status: false
     };
@@ -234,9 +228,13 @@ export default class S3Service implements IS3Service.IS3ServiceAPI {
       }
 
       try {
-        const s3Stream = await getParsedFile(filepath as string);
-        res.attachment(filepath);
-        s3Stream.pipe(res);
+        const params: any = {
+          Bucket: process.env.AWS_BUCKET_NAME,
+          Key: filepath
+      };                
+      const s3Stream = s3.getObject(params).createReadStream();
+      res.attachment(filepath);
+      s3Stream.pipe(res);
       } catch (e) {
         console.error(e);
         response.statusCode = STATUS_CODES.INTERNAL_SERVER_ERROR;
@@ -247,26 +245,6 @@ export default class S3Service implements IS3Service.IS3ServiceAPI {
         return apiResponse(response);
       }
 
-      const payload = {
-        document_type: value.document_type,
-        user_id: req.user._id
-      };
-      const result: s3Interface[] = await this.s3Store.getFiles(payload);
-      const filename = result[0].filepath;
-
-      // Get presigned url of images
-      for (let index = 0; index < result.length; index++) {
-        const element = result[index];
-        const presignedUrl = await generatePresignedUrl(element?.filepath);
-        element.filepath = presignedUrl;
-      }
-
-      response.statusCode = STATUS_CODES.OK;
-      response.message = responseMessage.FILE_FETCHED;
-      response.data = result;
-      response.status = true;
-      response.error = {};
-      return apiResponse(response);
     } catch (e) {
       console.error(e);
       response.statusCode = STATUS_CODES.INTERNAL_SERVER_ERROR;

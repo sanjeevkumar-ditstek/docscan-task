@@ -1,5 +1,4 @@
 import StatusCodeEnum from '../enum/statusCodes';
-import { Response } from 'express';
 
 export interface IResponse {
   statusCode: StatusCodeEnum;
@@ -10,11 +9,11 @@ export interface IResponse {
 }
 
 export interface IApiResponse extends IResponse {
-  response: Response;
+  response: any;
 }
 
 export interface IError {
-  message?: any;
+  message?: string;
   error?: any;
 }
 

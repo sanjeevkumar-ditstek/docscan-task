@@ -1,5 +1,5 @@
 import { IResponse } from '../../utils/interface/common';
-import { Request, Response } from 'express';
+import { Request } from 'express';
 
 export interface IS3ServiceAPI {
   uploadFile(request: IUploadRequest, response: IResponse): void;

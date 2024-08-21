@@ -23,7 +23,6 @@ export async function verifyGoogleToken(
 ): Promise<VerifyResult> {
   try {
     // Verify the ID token
-    console.log('CLIENT_ID: ', CLIENT_ID);
     const ticket = await client.verifyIdToken({
       idToken: idToken,
       audience: CLIENT_ID // Specify the CLIENT_ID of the app that accesses the backend

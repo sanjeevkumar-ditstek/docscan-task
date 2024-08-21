@@ -1,4 +1,4 @@
-import ErrorMessageEnum from 'src/utils/enum/errorMessage';
+import ErrorMessageEnum from '../utils/enum/errorMessage';
 import { IError } from '../utils/interface/common';
 export const JoiError = (error: any): IError => {
   const err: IError = {

@@ -16,6 +16,7 @@ export default class UserStore {
   public async createUser(userInput: IUSER): Promise<IUSER> {
     try {
       const savedUser: any = await UserModel.create(userInput);
+      delete savedUser?._doc?.password
       return savedUser;
     } catch (error) {
       return error;
@@ -30,7 +31,7 @@ export default class UserStore {
       const user: any = await UserModel.findOne(
         { email, status: { $ne: Status.DELETED } },
         { password: 1, firstname: 1, lastname: 1, email: 1 }
-      );
+      ).lean();
       return user;
     } catch (e) {
       return Promise.reject(new UserStore.OPERATION_UNSUCCESSFUL());
