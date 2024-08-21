@@ -10,7 +10,7 @@
     "start": "npm-watch dev",
     "lint": "eslint . --ext .ts",
     "lint-fix": "eslint . --ext .ts --fix",
-    "start-production": "ls && node .dist/index.js",
+    "start-production": "node .dist/index.js",
     "prepare": "husky install"
   },
   "husky": {

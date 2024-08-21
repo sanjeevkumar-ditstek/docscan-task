@@ -4,7 +4,7 @@ import AWS from 'aws-sdk';
 AWS.config.update({
   accessKeyId: process.env.AWS_ACCESS_KEY_ID,
   secretAccessKey: process.env.AWS_SECRET_KEY,
-  region: process.env.AWS_REGION,
+  region: process.env.AWS_REGION
 });
 
 // Create an S3 instance
@@ -16,7 +16,7 @@ const BUCKET_NAME = process.env.AWS_BUCKET_NAME;
 /**
  * Uploads an image to S3 bucket
  * @param {string} file
- * @param {string} folderName 
+ * @param {string} folderName
  * @returns {Promise<string>} - Promise that resolves to the URL of the uploaded image
  */
 export const uploadToS3 = async (file, folderName) => {
@@ -25,7 +25,7 @@ export const uploadToS3 = async (file, folderName) => {
     Key: `${folderName}/${Date.now()}.${file.originalname.split('.').pop()}`,
     Body: Buffer.from(file.buffer),
     ContentType: 'image/jpeg',
-    ServerSideEncryption: 'AES256',
+    ServerSideEncryption: 'AES256'
   };
 
   try {
@@ -42,34 +42,35 @@ export const checkS3FolderSize = async (path, fileSize) => {
     let continuationToken = null;
     const maxBytes = 1073741824; // Bytes in 1GB
     do {
-        const params = {
-            Bucket: BUCKET_NAME,
-            Prefix: path,
-            ContinuationToken: continuationToken // For pagination
-        };
+      const params = {
+        Bucket: BUCKET_NAME,
+        Prefix: path,
+        ContinuationToken: continuationToken // For pagination
+      };
 
-        const response = await s3.listObjectsV2(params).promise();
-        const contents = response.Contents;
+      const response = await s3.listObjectsV2(params).promise();
+      const contents = response.Contents;
 
-        contents.forEach(file => {
-            totalSize += file.Size;
-        });
+      contents.forEach((file) => {
+        totalSize += file.Size;
+      });
 
-        continuationToken = response.IsTruncated ? response.NextContinuationToken : null;
+      continuationToken = response.IsTruncated
+        ? response.NextContinuationToken
+        : null;
     } while (continuationToken);
 
     // Convert total size from bytes to gigabytes
     totalSize += fileSize;
-    if(totalSize >= maxBytes) {
-      return false
+    if (totalSize >= maxBytes) {
+      return false;
+    } else {
+      return true;
     }
-    else {
-      return true
-    }
-} catch (error) {
+  } catch (error) {
     console.error('Error calculating folder size:', error);
-}
-}
+  }
+};
 
 export const generatePresignedUrl = async (url) => {
   const urlObject = new URL(`${process.env.S3_BASEURL}${url}`);
@@ -77,7 +78,7 @@ export const generatePresignedUrl = async (url) => {
   const params = {
     Bucket: BUCKET_NAME,
     Key: key,
-    Expires: 1800,
+    Expires: 1800
   };
 
   return s3.getSignedUrl('getObject', params);
@@ -86,12 +87,11 @@ export const generatePresignedUrl = async (url) => {
 export const deleteFromS3 = async (key: string) => {
   const params = {
     Bucket: BUCKET_NAME,
-    Key: key,
+    Key: key
   };
 
   try {
     return await s3.deleteObject(params).promise();
-    
   } catch (error) {
     console.error(`Error deleting file ${key}:`, error);
   }
@@ -102,13 +102,11 @@ export const getParsedFile = async (key: string) => {
     Bucket: BUCKET_NAME,
     Key: key
   };
-  
+
   try {
     const s3Stream = s3.getObject(params).createReadStream();
     return s3Stream;
   } catch (error) {
     console.error(`Unable to parse file ${key}:`, error);
+  }
 };
-
-
-}

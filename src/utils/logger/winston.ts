@@ -1,6 +1,6 @@
-import winston from "winston";
+import winston from 'winston';
 
-export async function loggerStart() {
+export async function logger() {
   try {
     const logConfiguration = {
       transports: [
@@ -19,15 +19,15 @@ export async function loggerStart() {
         winston.format.metadata(),
         winston.format.timestamp(),
         winston.format.printf(({ timestamp, level, message, metadata }) => {
-          return `[${timestamp}] ${level}: ${message} :${JSON.stringify(metadata)}`;
+          return `[${timestamp}] ${level}: ${message} :${JSON.stringify(
+            metadata
+          )}`;
         })
       )
-    }
+    };
     const logger = winston.createLogger(logConfiguration);
     logger.info('Starting logging service');
-
   } catch (error) {
     console.error(error);
   }
 }
-

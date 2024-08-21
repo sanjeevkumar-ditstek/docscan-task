@@ -1,8 +1,7 @@
 import express, { Application, Request, Response } from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
-import routes from "./routes/index";
-
+import routes from './routes/index';
 
 dotenv.config();
 export class Server {
@@ -17,21 +16,23 @@ export class Server {
 
   private configureRoutes(): void {
     this.app.get('/', (req: Request, res: Response) => {
-      res.send("Basic Crud Application!")
-    })
+      res.send('Application is Running!');
+    });
   }
 
   private configureMiddleWare(): void {
-    this.app.use(cors({
-      credentials: true
-    }))
+    this.app.use(
+      cors({
+        credentials: true
+      })
+    );
     this.app.use(express.json());
-    this.app.use(express.static('public'))
-    routes(this.app)
+    this.app.use(express.static('public'));
+    routes(this.app);
   }
 
   public addMiddleware(middleware: any): void {
-    this.app.use(middleware)
+    this.app.use(middleware);
   }
 
   public start(): void {
@@ -41,8 +42,6 @@ export class Server {
   }
 
   public getApp() {
-    return this.app
+    return this.app;
   }
-
 }
-
