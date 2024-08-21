@@ -1,0 +1,76 @@
+{
+  "name": "crud-with-typescript",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc --jsx react --project . ",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "npm run build && node .dist/index.js",
+    "start": "npm-watch dev",
+    "lint": "eslint . --ext .ts",
+    "lint-fix": "eslint . --ext .ts --fix",
+    "start-production": "node .dist/index.js",
+    "prepare": "husky install"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run lint",
+      "pre-push": "npm run lint"
+    }
+  },
+  "watch": {
+    "dev": {
+      "patterns": [
+        "src"
+      ],
+      "quiet": false,
+      "legacyWatch": true,
+      "extensions": "ts, js, tsx"
+    }
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@types/winston": "^2.4.4",
+    "aws-sdk": "^2.1677.0",
+    "bcrypt": "^5.0.1",
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.2",
+    "express": "^4.18.1",
+    "file-type": "^18.0.0",
+    "google-auth-library": "^9.14.0",
+    "graphql": "^16.6.0",
+    "joi": "^17.6.1",
+    "jsonwebtoken": "^8.5.1",
+    "jwt-redis": "^7.0.3",
+    "mongoose": "^6.6.1",
+    "multer": "^1.4.5-lts.1",
+    "nanoid": "^3.3.4",
+    "path": "^0.12.7",
+    "verify-apple-id-token": "^3.1.2",
+    "winston": "^3.13.0"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^5.0.0",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.14",
+    "@types/jsonwebtoken": "^8.5.9",
+    "@types/multer": "^1.4.7",
+    "@types/node": "^18.11.9",
+    "@typescript-eslint/eslint-plugin": "^5.41.0",
+    "@typescript-eslint/parser": "^5.42.0",
+    "eslint": "^8.26.0",
+    "eslint-config-standard-with-typescript": "^23.0.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-n": "^15.3.0",
+    "eslint-plugin-promise": "^6.1.1",
+    "husky": "^8.0.1",
+    "nodemon": "^2.0.20",
+    "npm-watch": "^0.11.0",
+    "prettier": "^2.7.1",
+    "pretty-quick": "^3.1.3",
+    "typescript": "^4.8.4"
+  }
+}
