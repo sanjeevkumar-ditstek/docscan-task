@@ -43,8 +43,6 @@ _Below is an example of how you can setup up your app._
    ```sh 
    http://localhost:3000
    ```
-
-
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 

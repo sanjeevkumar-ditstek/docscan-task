@@ -16,6 +16,10 @@ export const updateSchema = Joi.object().keys({
 export const getSchema = Joi.object().keys({
   id: Joi.string().required()
 });
+export const getAllSchema = Joi.object().keys({
+  page: Joi.number().optional().min(1),
+  limit: Joi.number().optional().min(1)
+});
 
 export const loginSchema = Joi.object().keys({
   loginSource: Joi.string()

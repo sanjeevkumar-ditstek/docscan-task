@@ -12,6 +12,7 @@ import bcrypt from 'bcrypt';
 import { JoiError } from '../../helper/joiErrorHandler';
 import {
   createSchema,
+  getAllSchema,
   getSchema,
   loginSchema,
   updateSchema
@@ -21,6 +22,7 @@ import { JoiValidate } from '../../helper/JoiValidate';
 import LoginSource from '../../utils/enum/loginSource';
 import { verifyGoogleToken } from '../../utils/socialLogin/google';
 import { verifyAppleToken } from '../../utils/socialLogin/apple';
+import Pagination from '../../utils/enum/pagination'
 
 // Load environment variables from .env file
 dotenv.config();
@@ -130,7 +132,7 @@ export default class UserService implements IUserService.IUserServiceAPI {
    * @returns A promise that resolves to an API response containing the list of all users or an error message.
    */
   public getUsers = async (
-    request: IUserService.IGetAllUserRequest,
+    req: IUserService.IGetAllUserRequest,
     res: IUserService.IGetAllUserResponse
   ) => {
     const response: IApiResponse = {
@@ -140,8 +142,22 @@ export default class UserService implements IUserService.IUserServiceAPI {
       data: null,
       status: false
     };
+        // Validate request body
+        const { error, value } = JoiValidate(getAllSchema, req.query);
+        if (error) {
+          console.error(error);
+          const paramsError = JoiError(error);
+          response.statusCode = STATUS_CODES.UNPROCESSABLE_ENTITY;
+          response.message = ErrorMessageEnum.REQUEST_PARAMS_ERROR;
+          response.error = paramsError;
+          return apiResponse(response);
+        }
     try {
-      const users: IUSER[] = await this.userStore.getAll();
+      const payload = {
+        page: value?.page || Pagination.PAGE,
+        limit: value?.limit || Pagination.LIMIT
+      }
+      const users = await this.userStore.getAll(payload);
       const response: IApiResponse = {
         response: res,
         statusCode: STATUS_CODES.OK,
@@ -178,8 +194,8 @@ export default class UserService implements IUserService.IUserServiceAPI {
   ) => {
     const response: IApiResponse = {
       response: res,
-      statusCode: STATUS_CODES.UNKNOWN_CODE,
-      message: responseMessage.INVALID_EMAIL_OR_CODE,
+      statusCode: STATUS_CODES.INTERNAL_SERVER_ERROR,
+      message: ErrorMessageEnum.INTERNAL_ERROR,
       data: null,
       status: false
     };
@@ -203,7 +219,7 @@ export default class UserService implements IUserService.IUserServiceAPI {
       //if user's id is incorrect
       if (!user) {
         response.statusCode = STATUS_CODES.BAD_REQUEST;
-        response.message = ErrorMessageEnum.REQUEST_PARAMS_ERROR;
+        response.message = ErrorMessageEnum.USER_NOT_EXIST;
         response.data = null;
         response.status = false;
         response.error = toError(ErrorMessageEnum.INVALID_USER_ID);
@@ -212,7 +228,7 @@ export default class UserService implements IUserService.IUserServiceAPI {
     } catch (e) {
       console.error(e);
       response.statusCode = STATUS_CODES.INTERNAL_SERVER_ERROR;
-      response.message = ErrorMessageEnum.INTERNAL_ERROR;
+      response.message = ErrorMessageEnum.REQUEST_PARAMS_ERROR;
       response.data = null;
       response.status = false;
       response.error = toError(e.message);

@@ -10,7 +10,8 @@ import { apiResponse } from "../../helper/apiResponses";
 import { createSchema, getSchema, deleteSchema, getParsedFileSchema } from "../../utils/common/joiSchema/s3/s3Schema";
 import { JoiError } from "../../helper/joiErrorHandler";
 import { JoiValidate } from "../../helper/JoiValidate";
-import { uploadToS3, checkS3FolderSize, generatePresignedUrl, deleteFromS3, getParsedFile } from "../../utils/s3/s3Utility";
+import { uploadToS3, checkS3FolderSize, deleteFromS3 } from "../../utils/s3/s3Utility";
+import Pagination from '../../utils/enum/pagination'
 import AWS from 'aws-sdk';
 
 // Configure AWS SDK with your credentials
@@ -120,7 +121,7 @@ export default class S3Service implements IS3Service.IS3ServiceAPI {
     };
 
     // Validate request body
-    const { error, value } = JoiValidate(getSchema, req.body);
+    const { error, value } = JoiValidate(getSchema, req.query);
     if (error) {
       console.error(error);
       const paramsError = JoiError(error);
@@ -134,11 +135,13 @@ export default class S3Service implements IS3Service.IS3ServiceAPI {
       // Prepare payload for database query
       const payload = {
         document_type: value.document_type,
-        user_id: req.user._id
+        user_id: req.user._id,
+        page: Number(value?.page) || Pagination.PAGE,
+        limit: Number(value?.limit) || Pagination.LIMIT
       };
 
       // Retrieve files from the database
-      const result: s3Interface[] = await this.s3Store.getFiles(payload);
+      const result= await this.s3Store.getFiles(payload);
       response.statusCode = STATUS_CODES.OK;
       response.message = responseMessage.FILE_FETCHED;
       response.data = result;

@@ -35,16 +35,28 @@ export default class S3Store {
    * @param data - The data containing the user ID and optional document type.
    * @returns A promise that resolves to an array of file metadata or an error if the operation fails.
    */
-  public async getFiles(data: s3GetInterface): Promise<s3Interface[]> {
-    const { document_type, user_id } = data;
+  public async getFiles(data: s3GetInterface): Promise<unknown> {
+    const { document_type, user_id, page, limit } = data;
     try {
       // Constructs a query object based on the user ID and document type
       const queryObj: any = { user_id };
       if (document_type) {
         queryObj.document_type = document_type;
       }
+      const totalCount = await UserDocumentModel.countDocuments(queryObj);
+      const totalPages = Math.ceil(totalCount / limit);
       // Queries the UserDocumentModel collection and returns matching documents
-      return await UserDocumentModel.find(queryObj);
+      const documents =  await UserDocumentModel.find(queryObj).skip((page - 1) * limit).limit(limit);
+      const result = {
+        list:documents,
+        metadata:{
+          totalCount,
+          totalPages
+        }
+       
+      }
+      return result
+      
     } catch (error) {
       return error;
     }

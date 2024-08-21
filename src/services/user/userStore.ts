@@ -95,12 +95,22 @@ export default class UserStore {
    * 
    * @returns An array of user data or an error if the operation fails.
    */
-  public async getAll(): Promise<IUSER[]> {
+  public async getAll(data): Promise<unknown> {
     try {
-      const users: any = await UserModel.find({
+      const { page, limit } = data;
+      const totalCount = await UserModel.countDocuments({status: {$ne: 2}});
+      const totalPages = Math.ceil(totalCount / limit);
+      const users = await UserModel.find({
         status: { $ne: Status.DELETED }
-      });
-      return users;
+      }).skip((page - 1) * limit).limit(limit);;
+      const result = {
+        list:users,
+        metadata:{
+          totalCount,
+          totalPages
+        }
+      }
+      return result;
     } catch (e) {
       return Promise.reject(new UserStore.OPERATION_UNSUCCESSFUL());
     }
