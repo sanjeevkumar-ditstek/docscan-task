@@ -21,14 +21,18 @@ import { JoiValidate } from '../../helper/JoiValidate';
 import LoginSource from '../../utils/enum/loginSource';
 import { verifyGoogleToken } from '../../utils/socialLogin/google';
 import { verifyAppleToken } from '../../utils/socialLogin/apple';
+
+// Load environment variables from .env file
 dotenv.config();
 
+// UserService class implementing IUserServiceAPI interface
 export default class UserService implements IUserService.IUserServiceAPI {
   private userStore = new UserStore();
   private proxy: IAppServiceProxy;
   constructor(proxy: IAppServiceProxy) {
     this.proxy = proxy;
   }
+  // Function to generate JWT token for a user
   private generateJWT = (user: IUSER): string => {
     const payLoad = {
       _id: user._id,
@@ -37,6 +41,13 @@ export default class UserService implements IUserService.IUserServiceAPI {
     return jwt.sign(payLoad, process.env.JWT_SECRET);
   };
 
+  /**
+   * Registers a new user in the system.
+   * 
+   * @param req - The request object containing the user registration details such as firstname, lastname, email, and password.
+   * @param res - The response object used to send back the API response.
+   * @returns A promise that resolves to an API response containing the newly created user or an error message.
+   */
   public create = async (
     req: IUserService.IRegisterUserRequest,
     res: IUserService.IRegisterUserResponse
@@ -111,6 +122,13 @@ export default class UserService implements IUserService.IUserServiceAPI {
     }
   };
 
+  /**
+   * Retrieves all users from the database.
+   * 
+   * @param request - The request object, which may contain filters or pagination options (currently unused).
+   * @param res - The response object used to send back the API response.
+   * @returns A promise that resolves to an API response containing the list of all users or an error message.
+   */
   public getUsers = async (
     request: IUserService.IGetAllUserRequest,
     res: IUserService.IGetAllUserResponse
@@ -147,6 +165,13 @@ export default class UserService implements IUserService.IUserServiceAPI {
     }
   };
 
+  /**
+   * Retrieves a user from the database based on the provided user ID.
+   * 
+   * @param request - The request object containing the user ID in the route parameters.
+   * @param res - The response object used to send back the API response.
+   * @returns A promise that resolves to an API response containing the user details or an error message.
+   */
   public getUserById = async (
     request: IUserService.IGetUserRequest,
     res: IUserService.IGetUserResponse
@@ -202,7 +227,11 @@ export default class UserService implements IUserService.IUserServiceAPI {
   };
 
   /**
-   * Login
+   * Handles user login based on the provided credentials and login source (email, Google, or Apple).
+   * 
+   * @param req - The request object containing login credentials and login source information.
+   * @param res - The response object used to send back the API response.
+   * @returns A promise that resolves to an API response containing the user data and JWT token or an error message.
    */
   public loginUser = async (
     req: IUserService.ILoginUserRequest,
@@ -407,8 +436,13 @@ export default class UserService implements IUserService.IUserServiceAPI {
       return apiResponse(response);
     }
   };
+
   /**
-   * Get user by token
+   * Retrieves the user profile based on the user ID extracted from the JWT token.
+   * 
+   * @param req - The request object containing the user information from the JWT token.
+   * @param res - The response object used to send back the API response.
+   * @returns A promise that resolves to an API response containing the user profile or an error message.
    */
   public getUserByToken = async (
     req: IUserService.IGetProfileUserRequest,
@@ -451,8 +485,13 @@ export default class UserService implements IUserService.IUserServiceAPI {
     response.error = null;
     return apiResponse(response);
   };
+
   /**
-   * Update
+   * Updates user information based on the provided user ID and request body.
+   * 
+   * @param req - The request object containing the user ID in the URL parameters and the update data in the request body.
+   * @param res - The response object used to send back the API response.
+   * @returns A promise that resolves to an API response containing the updated user information or an error message.
    */
   public update = async (
     req: IUserService.IUpdateUserRequest,
@@ -531,8 +570,13 @@ export default class UserService implements IUserService.IUserServiceAPI {
       return apiResponse(response);
     }
   };
+
   /**
-   * Delete
+   * Deletes a user from the database based on the provided user ID.
+   * 
+   * @param request - The request object containing the user ID in the URL parameters.
+   * @param res - The response object used to send back the API response.
+   * @returns A promise that resolves to an API response indicating the success or failure of the delete operation.
    */
   public delete = async (
     request: IUserService.IDeleteUserRequest,

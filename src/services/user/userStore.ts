@@ -4,19 +4,23 @@ import Status from '../../utils/enum/status';
 import LoginSource from '../../utils/enum/loginSource';
 
 export default class UserStore {
+  // Custom error class for handling operation failures
   public static OPERATION_UNSUCCESSFUL = class extends Error {
     constructor() {
-      super('An error occured while processing the request.');
+      super('An error occurred while processing the request.');
     }
   };
 
   /**
-   * creating new user and saving in Database
+   * Creates a new user and saves it in the database.
+   * 
+   * @param userInput - The user data to be saved, including fields like email, password, etc.
+   * @returns The saved user data, excluding the password, or an error if the operation fails.
    */
   public async createUser(userInput: IUSER): Promise<IUSER> {
     try {
       const savedUser: any = await UserModel.create(userInput);
-      delete savedUser?._doc?.password
+      delete savedUser?._doc?.password; // Remove password from the response
       return savedUser;
     } catch (error) {
       return error;
@@ -24,14 +28,17 @@ export default class UserStore {
   }
 
   /**
-   *Get by email
+   * Retrieves a user by their email.
+   * 
+   * @param email - The email of the user to be retrieved.
+   * @returns The user data, including the password, or an error if the operation fails.
    */
   public async getByEmail(email: string): Promise<IUSER> {
     try {
       const user: any = await UserModel.findOne(
         { email, status: { $ne: Status.DELETED } },
         { password: 1, firstname: 1, lastname: 1, email: 1 }
-      ).lean();
+      ).lean(); // Fetch the user with specified fields
       return user;
     } catch (e) {
       return Promise.reject(new UserStore.OPERATION_UNSUCCESSFUL());
@@ -39,7 +46,10 @@ export default class UserStore {
   }
 
   /**
-   *Get by sub
+   * Retrieves a user by their social login token.
+   * 
+   * @param data - The data containing the social login source and other identifiers.
+   * @returns The user data or an error if the operation fails.
    */
   public async getBySocialToken(data): Promise<IUSER> {
     try {
@@ -47,11 +57,14 @@ export default class UserStore {
         login_source: data.loginSource,
         status: { $ne: Status.DELETED }
       };
-      if (data.loginSource == LoginSource.GOOGLE) {
+
+      // Adjust the query based on the login source
+      if (data.loginSource === LoginSource.GOOGLE) {
         query.login_source = LoginSource.GOOGLE;
       } else {
         query.login_source = LoginSource.APPLE;
       }
+
       const user: any = await UserModel.findOne(query);
       return user;
     } catch (e) {
@@ -60,7 +73,10 @@ export default class UserStore {
   }
 
   /**
-   *Get by id
+   * Retrieves a user by their ID.
+   * 
+   * @param id - The ID of the user to be retrieved.
+   * @returns The user data or an error if the operation fails.
    */
   public async getById(id: string): Promise<IUSER> {
     try {
@@ -75,7 +91,9 @@ export default class UserStore {
   }
 
   /**
-   *Get all
+   * Retrieves all users, excluding those marked as deleted.
+   * 
+   * @returns An array of user data or an error if the operation fails.
    */
   public async getAll(): Promise<IUSER[]> {
     try {
@@ -89,31 +107,37 @@ export default class UserStore {
   }
 
   /**
-   *Update
+   * Updates a user by their ID with the provided payload.
+   * 
+   * @param id - The ID of the user to be updated.
+   * @param payload - The data to update the user with.
+   * @returns The updated user data or an error if the operation fails.
    */
   public async update(id: string, payload: IUSER): Promise<IUSER> {
     try {
       const user: IUSER = await UserModel.findOneAndUpdate(
         { _id: id },
         payload,
-        {
-          new: true
-        }
+        { new: true } // Return the updated document
       );
       return user;
     } catch (e) {
       return e;
     }
   }
+
   /**
-   *Delete
+   * Marks a user as deleted by updating their status.
+   * 
+   * @param id - The ID of the user to be deleted.
+   * @returns The updated user data with the deleted status or an error if the operation fails.
    */
   public async delete(id: string): Promise<IUSER> {
     try {
       const user: any = await UserModel.findOneAndUpdate(
         { _id: id },
         { status: Status.DELETED },
-        { new: true }
+        { new: true } // Return the updated document
       );
       return user;
     } catch (e) {
