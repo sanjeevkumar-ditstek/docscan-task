@@ -293,7 +293,8 @@ export default class UserService implements IUserService.IUserServiceAPI {
           const errorMsg = responseMessage.INVALID_CREDENTIALS;
           response.statusCode = STATUS_CODES.UNAUTHORIZED;
           response.error = toError(errorMsg);
-          return response;
+          response.message = errorMsg
+          return apiResponse(response);
         }
         delete user['password'];
 
