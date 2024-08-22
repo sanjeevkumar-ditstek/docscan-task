@@ -500,7 +500,7 @@ export default class UserService implements IUserService.IUserServiceAPI {
 
     response.statusCode = STATUS_CODES.OK;
     response.message = responseMessage.USER_FETCHED;
-    response.data = { user };
+    response.data = user;
     response.status = true;
     response.error = null;
     return apiResponse(response);
