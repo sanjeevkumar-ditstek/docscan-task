@@ -5,7 +5,7 @@ import * as IAuthService from './IAuthService';
 import { IAppServiceProxy } from '../appServiceProxy';
 import { IApiResponse, toError } from '../../utils/interface/common';
 import { apiResponse } from '../../helper/apiResponses';
-import { Response, Request, NextFunction } from 'express';
+import { Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 dotenv.config();

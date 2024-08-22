@@ -2,6 +2,7 @@ import express, { Application, Request, Response } from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
 import routes from './routes/index';
+import logger from './utils/logger/winston';
 
 dotenv.config();
 export class Server {
@@ -37,7 +38,7 @@ export class Server {
 
   public start(): void {
     this.app.listen(this.port, () => {
-      console.log(`Server listening on port ${this.port}`);
+      logger.info(`Server listening on port ${this.port}`);
     });
   }
 

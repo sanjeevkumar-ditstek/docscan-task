@@ -5,7 +5,7 @@ import {
 } from '../../utils/interface/s3/IS3';
 import { UserDocumentModel } from '../../models/userDocuments';
 
-export default class S3Store {
+export default class uploadStore {
   // A custom error class that represents an unsuccessful operation
   public static OPERATION_UNSUCCESSFUL = class extends Error {
     constructor() {
@@ -15,7 +15,7 @@ export default class S3Store {
 
   /**
    * Uploads a file metadata to the database.
-   * 
+   *
    * @param s3Input - The file metadata to be stored, including document type, user ID, file path, etc.
    * @returns A promise that resolves to the stored file metadata or an error if the operation fails.
    */
@@ -31,7 +31,7 @@ export default class S3Store {
 
   /**
    * Retrieves file metadata from the database based on the user ID and document type.
-   * 
+   *
    * @param data - The data containing the user ID and optional document type.
    * @returns A promise that resolves to an array of file metadata or an error if the operation fails.
    */
@@ -46,17 +46,17 @@ export default class S3Store {
       const totalCount = await UserDocumentModel.countDocuments(queryObj);
       const totalPages = Math.ceil(totalCount / limit);
       // Queries the UserDocumentModel collection and returns matching documents
-      const documents =  await UserDocumentModel.find(queryObj).skip((page - 1) * limit).limit(limit);
+      const documents = await UserDocumentModel.find(queryObj)
+        .skip((page - 1) * limit)
+        .limit(limit);
       const result = {
-        list:documents,
-        metadata:{
+        list: documents,
+        metadata: {
           totalCount,
           totalPages
         }
-       
-      }
-      return result
-      
+      };
+      return result;
     } catch (error) {
       return error;
     }
@@ -64,7 +64,7 @@ export default class S3Store {
 
   /**
    * Retrieves a single file metadata from the database by document ID and user ID.
-   * 
+   *
    * @param data - The data containing the document ID and user ID.
    * @returns A promise that resolves to the file metadata or an error if the operation fails.
    */
@@ -82,7 +82,7 @@ export default class S3Store {
 
   /**
    * Marks a file as deleted in the database by updating its status.
-   * 
+   *
    * @param data - The data containing the document ID and user ID.
    * @returns A promise that resolves to the updated file metadata or an error if the operation fails.
    */

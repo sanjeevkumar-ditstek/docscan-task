@@ -22,7 +22,8 @@ import { JoiValidate } from '../../helper/JoiValidate';
 import LoginSource from '../../utils/enum/loginSource';
 import { verifyGoogleToken } from '../../utils/socialLogin/google';
 import { verifyAppleToken } from '../../utils/socialLogin/apple';
-import Pagination from '../../utils/enum/pagination'
+import Pagination from '../../utils/enum/pagination';
+import logger from '../../utils/logger/winston';
 
 // Load environment variables from .env file
 dotenv.config();
@@ -45,7 +46,7 @@ export default class UserService implements IUserService.IUserServiceAPI {
 
   /**
    * Registers a new user in the system.
-   * 
+   *
    * @param req - The request object containing the user registration details such as firstname, lastname, email, and password.
    * @param res - The response object used to send back the API response.
    * @returns A promise that resolves to an API response containing the newly created user or an error message.
@@ -59,7 +60,8 @@ export default class UserService implements IUserService.IUserServiceAPI {
       statusCode: STATUS_CODES.INTERNAL_SERVER_ERROR,
       message: ErrorMessageEnum.INTERNAL_ERROR,
       data: null,
-      status: false
+      status: false,
+      error: null
     };
     const { error, value } = JoiValidate(createSchema, req.body);
     if (error) {
@@ -86,8 +88,8 @@ export default class UserService implements IUserService.IUserServiceAPI {
         response.error = toError(ErrorMessageEnum.EMAIL_ALREADY_EXIST);
         return apiResponse(response);
       }
-      } catch (e) {
-      console.error(e);
+    } catch (e) {
+      logger.error(e);
       response.statusCode = STATUS_CODES.INTERNAL_SERVER_ERROR;
       response.message = ErrorMessageEnum.INTERNAL_ERROR;
       response.data = null;
@@ -114,7 +116,7 @@ export default class UserService implements IUserService.IUserServiceAPI {
       response.error = null;
       return apiResponse(response);
     } catch (e) {
-      console.error(e);
+      logger.error(e);
       response.statusCode = STATUS_CODES.INTERNAL_SERVER_ERROR;
       response.message = ErrorMessageEnum.INTERNAL_ERROR;
       response.data = null;
@@ -126,7 +128,7 @@ export default class UserService implements IUserService.IUserServiceAPI {
 
   /**
    * Retrieves all users from the database.
-   * 
+   *
    * @param request - The request object, which may contain filters or pagination options (currently unused).
    * @param res - The response object used to send back the API response.
    * @returns A promise that resolves to an API response containing the list of all users or an error message.
@@ -142,21 +144,21 @@ export default class UserService implements IUserService.IUserServiceAPI {
       data: null,
       status: false
     };
-        // Validate request body
-        const { error, value } = JoiValidate(getAllSchema, req.query);
-        if (error) {
-          console.error(error);
-          const paramsError = JoiError(error);
-          response.statusCode = STATUS_CODES.UNPROCESSABLE_ENTITY;
-          response.message = ErrorMessageEnum.REQUEST_PARAMS_ERROR;
-          response.error = paramsError;
-          return apiResponse(response);
-        }
+    // Validate request body
+    const { error, value } = JoiValidate(getAllSchema, req.query);
+    if (error) {
+      logger.error(error);
+      const paramsError = JoiError(error);
+      response.statusCode = STATUS_CODES.UNPROCESSABLE_ENTITY;
+      response.message = ErrorMessageEnum.REQUEST_PARAMS_ERROR;
+      response.error = paramsError;
+      return apiResponse(response);
+    }
     try {
       const payload = {
         page: value?.page || Pagination.PAGE,
         limit: value?.limit || Pagination.LIMIT
-      }
+      };
       const users = await this.userStore.getAll(payload);
       const response: IApiResponse = {
         response: res,
@@ -168,7 +170,7 @@ export default class UserService implements IUserService.IUserServiceAPI {
       };
       return apiResponse(response);
     } catch (e) {
-      console.log(e);
+      logger.error(e);
       const response: IApiResponse = {
         response: res,
         statusCode: STATUS_CODES.INTERNAL_SERVER_ERROR,
@@ -183,7 +185,7 @@ export default class UserService implements IUserService.IUserServiceAPI {
 
   /**
    * Retrieves a user from the database based on the provided user ID.
-   * 
+   *
    * @param request - The request object containing the user ID in the route parameters.
    * @param res - The response object used to send back the API response.
    * @returns A promise that resolves to an API response containing the user details or an error message.
@@ -202,7 +204,7 @@ export default class UserService implements IUserService.IUserServiceAPI {
 
     const { error, value } = JoiValidate(getSchema, { id: request.params.id });
     if (error) {
-      console.error(error);
+      logger.error(error);
       const paramsError = JoiError(error);
       response.statusCode = STATUS_CODES.UNPROCESSABLE_ENTITY;
       response.message = ErrorMessageEnum.REQUEST_PARAMS_ERROR;
@@ -226,7 +228,7 @@ export default class UserService implements IUserService.IUserServiceAPI {
         return apiResponse(response);
       }
     } catch (e) {
-      console.error(e);
+      logger.error(e);
       response.statusCode = STATUS_CODES.INTERNAL_SERVER_ERROR;
       response.message = ErrorMessageEnum.REQUEST_PARAMS_ERROR;
       response.data = null;
@@ -244,7 +246,7 @@ export default class UserService implements IUserService.IUserServiceAPI {
 
   /**
    * Handles user login based on the provided credentials and login source (email, Google, or Apple).
-   * 
+   *
    * @param req - The request object containing login credentials and login source information.
    * @param res - The response object used to send back the API response.
    * @returns A promise that resolves to an API response containing the user data and JWT token or an error message.
@@ -263,7 +265,7 @@ export default class UserService implements IUserService.IUserServiceAPI {
     let user: IUSER;
     const { error, value } = JoiValidate(loginSchema, req.body);
     if (error) {
-      console.error(error);
+      logger.error(error);
       const paramsError = JoiError(error);
       response.statusCode = STATUS_CODES.UNPROCESSABLE_ENTITY;
       response.message = ErrorMessageEnum.REQUEST_PARAMS_ERROR;
@@ -444,6 +446,7 @@ export default class UserService implements IUserService.IUserServiceAPI {
         }
       }
     } catch (e) {
+      logger.error(e);
       response.statusCode = STATUS_CODES.INTERNAL_SERVER_ERROR;
       response.message = ErrorMessageEnum.INTERNAL_ERROR;
       response.data = null;
@@ -455,7 +458,7 @@ export default class UserService implements IUserService.IUserServiceAPI {
 
   /**
    * Retrieves the user profile based on the user ID extracted from the JWT token.
-   * 
+   *
    * @param req - The request object containing the user information from the JWT token.
    * @param res - The response object used to send back the API response.
    * @returns A promise that resolves to an API response containing the user profile or an error message.
@@ -504,7 +507,7 @@ export default class UserService implements IUserService.IUserServiceAPI {
 
   /**
    * Updates user information based on the provided user ID and request body.
-   * 
+   *
    * @param req - The request object containing the user ID in the URL parameters and the update data in the request body.
    * @param res - The response object used to send back the API response.
    * @returns A promise that resolves to an API response containing the updated user information or an error message.
@@ -589,7 +592,7 @@ export default class UserService implements IUserService.IUserServiceAPI {
 
   /**
    * Deletes a user from the database based on the provided user ID.
-   * 
+   *
    * @param request - The request object containing the user ID in the URL parameters.
    * @param res - The response object used to send back the API response.
    * @returns A promise that resolves to an API response indicating the success or failure of the delete operation.

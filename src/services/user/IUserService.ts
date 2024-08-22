@@ -1,6 +1,6 @@
 import IUSER from '../../utils/interface/user/IUser';
 import IUPDATEUSER from '../../utils/interface/user/IUpdateUser';
-import { IResponse } from '../../utils/interface/common';
+import { IResponse, IExpressResponse } from '../../utils/interface/common';
 import { Request } from 'express';
 
 export interface IUserServiceAPI {
@@ -29,6 +29,7 @@ export interface IRegisterUserRequest extends Request {
 }
 
 export interface IRegisterUserResponse extends IResponse {
+  response: IExpressResponse;
   user?: IUSER;
 }
 
@@ -77,7 +78,7 @@ export interface IGetUserResponse extends IResponse {
  *  Get all user
  ********************************************************************************/
 
-export interface IGetAllUserRequest extends Request {}
+export type IGetAllUserRequest = Request;
 export interface IGetAllUserResponse extends IResponse {
   users?: IUSER[];
 }

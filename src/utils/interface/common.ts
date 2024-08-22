@@ -1,3 +1,4 @@
+import { Response } from 'express';
 import StatusCodeEnum from '../enum/statusCodes';
 
 export interface IResponse {
@@ -7,7 +8,7 @@ export interface IResponse {
   status: boolean;
   error?: any;
 }
-
+export type IExpressResponse = Response;
 export interface IApiResponse extends IResponse {
   response: any;
 }

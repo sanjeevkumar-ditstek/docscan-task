@@ -1,11 +1,11 @@
-import { IResponse } from '../../utils/interface/common';
+import { IExpressResponse, IResponse } from '../../utils/interface/common';
 import { Request } from 'express';
 
-export interface IS3ServiceAPI {
-  uploadFile(request: IUploadRequest, response: IResponse): void;
-  getFiles(request: IGetFilesRequest, response: IResponse): void;
-  deleteFile(request: IDeleteFilesRequest, response: IResponse): void;
-  getFileFromS3(request: IGetFileFromS3Request, response: IResponse): void;
+export interface IUploadServiceAPI {
+  uploadFile(request: IUploadRequest, response: IExpressResponse): void;
+  getFiles(request: IGetFilesRequest, response: IExpressResponse): void;
+  deleteFile(request: IDeleteFilesRequest, response: IExpressResponse): void;
+  getFile(request: IGetFile, response: IExpressResponse): void;
 }
 
 /********************************************************************************
@@ -48,7 +48,7 @@ export interface IDeleteFilesRequest extends Request {
 /********************************************************************************
  *  Get File From S3
  ********************************************************************************/
-export interface IGetFileFromS3Request extends Request {
+export interface IGetFile extends Request {
   filepath: string;
   user: {
     _id: string;
