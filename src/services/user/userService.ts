@@ -468,7 +468,6 @@ export default class UserService implements IUserService.IUserServiceAPI {
     res: IUserService.IGetProfileUserResponse
   ) => {
     const { _id } = req.user;
-    console.log('id: ', _id);
     const response: IApiResponse = {
       response: res,
       statusCode: STATUS_CODES.UNKNOWN_CODE,
