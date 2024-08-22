@@ -104,8 +104,16 @@ export const getParsedFile = async (key: string) => {
     Key: key
   };
 
+  // Validate if file exists
   try {
-    const s3Stream = s3.getObject(params).createReadStream();
+    await s3.headObject(params).promise();
+  } catch (e) {
+    logger.error(`File not found : ${key} : ${e?.code}`);
+    throw new Error(`File not found : ${e?.code}`);
+  }
+
+  try {
+    const s3Stream = await s3.getObject(params).createReadStream();
     return s3Stream;
   } catch (error) {
     logger.error(`Unable to parse file ${key}:`, error);
