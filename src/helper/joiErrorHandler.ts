@@ -6,7 +6,7 @@ export const JoiError = (error: any): IError => {
     error: []
   };
   err.error = [];
-  error.details.forEach((element) => {
+  error?.details?.forEach((element) => {
     err.error.push({
       message: element?.message,
       inputValue: element?.context?.value
