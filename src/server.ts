@@ -24,7 +24,7 @@ export class Server {
   private configureMiddleWare(): void {
     this.app.use(
       cors({
-        credentials: true
+        origin: "*"
       })
     );
     this.app.use(express.json());
