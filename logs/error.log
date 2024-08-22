@@ -12,3 +12,4 @@
 [2024-08-22T07:12:15.586Z] [31merror[39m: [31mAn error occurred in user Store while processing the request.[39m :{}
 [2024-08-22T07:17:24.256Z] [31merror[39m: [31mArgument passed in must be a string of 12 bytes or a string of 24 hex characters or an integer[39m :{}
 [2024-08-22T07:17:24.257Z] [31merror[39m: [31mAn error occurred in user Store while processing the request.[39m :{}
+[2024-08-22T08:25:34.683Z] [31merror[39m: [31mCannot read properties of undefined (reading 'valid')[39m :{}
