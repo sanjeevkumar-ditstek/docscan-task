@@ -215,7 +215,6 @@ export default class UserService implements IUserService.IUserServiceAPI {
     }
 
     const { id } = value;
-    console.log('id: ', id);
     let user: IUSER;
     try {
       user = await this.userStore.getById(id);
