@@ -3,7 +3,9 @@ import { UserModel } from '../../models/users';
 import Status from '../../utils/enum/status';
 import LoginSource from '../../utils/enum/loginSource';
 import logger from '../../utils/logger/winston';
+import mongoose from 'mongoose';
 
+const ObjectId = mongoose.Types.ObjectId;
 export default class UserStore {
   // Custom error class for handling operation failures
   public static OPERATION_UNSUCCESSFUL = class extends Error {
@@ -84,10 +86,40 @@ export default class UserStore {
    */
   public async getById(id: string): Promise<IUSER> {
     try {
-      const user = await UserModel.findOne({
-        _id: id,
-        status: { $ne: Status.DELETED }
-      });
+      const pipeline = [
+        {
+          $match: {
+            _id: new ObjectId(id),
+            status: { $ne: Status.DELETED }
+          },
+        },
+        {
+          $lookup: {
+            from: "userdocuments",
+            localField: "_id",
+            foreignField: "user_id",
+            as: "userdocuments",
+          },
+        },
+        {
+          $unwind: "$userdocuments",  // Unwind the userdocuments array
+        },
+        {
+          $group: {
+            _id: "$_id",
+            totalDocuments: { $sum: 1 },  // Count the number of documents
+            totalFileSize: { $sum: { $toDouble: "$userdocuments.filesize" } },
+            firstname: { $first: "$firstname" },  // Convert filesize to double and sum it up
+            lastname: { $first: "$lastname" },
+            email: { $first: "$email" },
+            status: { $first: "$status" },
+            login_source: { $first: "$login_source" }
+
+
+          },
+        },
+      ]
+      const [user] = await UserModel.aggregate(pipeline)
       return user;
     } catch (e) {
       logger.error(e);

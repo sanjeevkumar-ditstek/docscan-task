@@ -52,7 +52,7 @@ export interface ILoginUserResponse extends IResponse {
  ********************************************************************************/
 export interface IGetProfileUserRequest extends Request {
   user: {
-    id: string;
+    _id: string;
     role: string;
     email: string;
   };

@@ -467,7 +467,8 @@ export default class UserService implements IUserService.IUserServiceAPI {
     req: IUserService.IGetProfileUserRequest,
     res: IUserService.IGetProfileUserResponse
   ) => {
-    const { id } = req.user;
+    const { _id } = req.user;
+    console.log('id: ', _id);
     const response: IApiResponse = {
       response: res,
       statusCode: STATUS_CODES.UNKNOWN_CODE,
@@ -477,7 +478,7 @@ export default class UserService implements IUserService.IUserServiceAPI {
     };
     let user: IUSER;
     try {
-      user = await this.userStore.getById(id);
+      user = await this.userStore.getById(_id);
       //if user's id is incorrect
       if (!user) {
         response.statusCode = STATUS_CODES.BAD_REQUEST;
@@ -487,6 +488,7 @@ export default class UserService implements IUserService.IUserServiceAPI {
         response.error = toError(ErrorMessageEnum.INVALID_USER_ID);
         return apiResponse(response);
       }
+
     } catch (e) {
       logger.error(e);
       response.statusCode = STATUS_CODES.INTERNAL_SERVER_ERROR;
