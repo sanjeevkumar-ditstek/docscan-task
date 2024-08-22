@@ -119,8 +119,9 @@ export default class UserStore {
           },
         },
       ]
-      const [user] = await UserModel.aggregate(pipeline)
-      return user;
+      const user = await UserModel.aggregate(pipeline)
+      if(user.length) user[0].maxStorageLimit = Number(process.env.S3_STORAGE_LIMIT) || 1073741824;
+      return user?.[0];
     } catch (e) {
       logger.error(e);
       return Promise.reject(new UserStore.OPERATION_UNSUCCESSFUL());
