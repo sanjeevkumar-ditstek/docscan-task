@@ -9,6 +9,7 @@ import { Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 dotenv.config();
+import logger from '../../utils/logger/winston'
 
 export default class AuthService implements IAuthService.IAuthServiceAPI {
   private proxy: IAppServiceProxy;
@@ -40,7 +41,7 @@ export default class AuthService implements IAuthService.IAuthServiceAPI {
       process.env.JWT_SECRET,
       (error, data: IAuthService.IAuthJWTData) => {
         if (error) {
-          console.error(error);
+          logger.error(error);
           response.statusCode = STATUS_CODES.UNAUTHORIZED;
           response.message = ErrorMessageEnum.UNAUTHORIZED;
           response.data = null;

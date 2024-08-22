@@ -34,7 +34,6 @@ const UserSchema: Schema<IUSER> = new Schema<IUSER>(
     email: {
       type: String,
       required: true,
-      unique: true
     },
     password: {
       type: String,
@@ -47,7 +46,7 @@ const UserSchema: Schema<IUSER> = new Schema<IUSER>(
     login_source: {
       type: String,
       enum: [LoginSource.EMAIL, LoginSource.APPLE, LoginSource.GOOGLE],
-      default: LoginSource.GOOGLE
+      default: LoginSource.EMAIL
     },
     google_token: {
       type: String

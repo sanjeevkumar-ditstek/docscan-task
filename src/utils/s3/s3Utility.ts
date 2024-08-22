@@ -1,4 +1,5 @@
 import AWS from 'aws-sdk';
+import logger from '../logger/winston';
 
 // Configure AWS SDK with your credentials
 AWS.config.update({
@@ -32,7 +33,7 @@ export const uploadToS3 = async (file, folderName) => {
     const data = await s3.upload(params).promise();
     return data.Key;
   } catch (error) {
-    console.error('Error uploading file:', error);
+    logger.error('Error uploading file:', error);
     throw error;
   }
 };
@@ -68,7 +69,7 @@ export const checkS3FolderSize = async (path, fileSize) => {
       return true;
     }
   } catch (error) {
-    console.error('Error calculating folder size:', error);
+    logger.error('Error calculating folder size:', error);
   }
 };
 
@@ -93,7 +94,7 @@ export const deleteFromS3 = async (key: string) => {
   try {
     return await s3.deleteObject(params).promise();
   } catch (error) {
-    console.error(`Error deleting file ${key}:`, error);
+    logger.error(`Error deleting file ${key}:`, error);
   }
 };
 
@@ -107,6 +108,6 @@ export const getParsedFile = async (key: string) => {
     const s3Stream = s3.getObject(params).createReadStream();
     return s3Stream;
   } catch (error) {
-    console.error(`Unable to parse file ${key}:`, error);
+    logger.error(`Unable to parse file ${key}:`, error);
   }
 };

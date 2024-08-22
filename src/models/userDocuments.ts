@@ -1,11 +1,20 @@
-import mongoose, { model } from 'mongoose';
-import userDocumentInterface from '../utils/interface/store/userDocument';
+import mongoose, { Schema } from 'mongoose';
 import Status from '../utils/enum/status';
-const schema = mongoose.Schema;
-const userDocumentSchema = new schema<userDocumentInterface>(
+
+export default interface IUSERDOCUMENT extends Document {
+  _id?: string;
+  user_id?: Schema.Types.ObjectId;
+  filepath?: string;
+  upload_date?: string;
+  filesize?: string;
+  document_type?: string;
+  mimetype?: string;
+  status?: number;
+}
+const UserDocumentSchema: Schema<IUSERDOCUMENT> = new Schema<IUSERDOCUMENT>(
   {
     user_id: {
-      type: schema.Types.ObjectId,
+      type: Schema.Types.ObjectId,
       ref: 'users'
     },
     filepath: {
@@ -32,4 +41,5 @@ const userDocumentSchema = new schema<userDocumentInterface>(
   { timestamps: true }
 );
 
-export const UserDocumentModel = model('userDocuments', userDocumentSchema);
+export const UserDocumentModel = (mongoose.models.userDocuments as mongoose.Model<IUSERDOCUMENT>) ||
+mongoose.model<IUSERDOCUMENT>('userDocuments', UserDocumentSchema);

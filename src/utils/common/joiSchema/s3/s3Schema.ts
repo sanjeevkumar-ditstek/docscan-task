@@ -9,7 +9,7 @@ export const getSchema = Joi.object().keys({
   limit: Joi.number().optional().min(1)
 });
 export const deleteSchema = Joi.object().keys({
-  document_id: Joi.string().optional()
+  document_id: Joi.string().required()
 });
 export const getParsedFileSchema = Joi.object().keys({
   filepath: Joi.string().optional()

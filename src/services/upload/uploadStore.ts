@@ -39,7 +39,7 @@ export default class uploadStore {
     const { document_type, user_id, page, limit } = data;
     try {
       // Constructs a query object based on the user ID and document type
-      const queryObj: any = { user_id };
+      const queryObj: any = { user_id, status: { $ne: 2 } };
       if (document_type) {
         queryObj.document_type = document_type;
       }

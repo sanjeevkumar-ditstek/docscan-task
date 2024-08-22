@@ -1,4 +1,4 @@
-import { IExpressResponse, IResponse } from '../../utils/interface/common';
+import { IExpressResponse } from '../../utils/interface/common';
 import { Request } from 'express';
 
 export interface IUploadServiceAPI {

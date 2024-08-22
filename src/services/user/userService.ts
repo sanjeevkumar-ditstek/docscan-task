@@ -65,7 +65,7 @@ export default class UserService implements IUserService.IUserServiceAPI {
     };
     const { error, value } = JoiValidate(createSchema, req.body);
     if (error) {
-      console.error(error);
+      logger.error(error);
       const paramsError = JoiError(error);
       response.statusCode = STATUS_CODES.UNPROCESSABLE_ENTITY;
       response.message = ErrorMessageEnum.REQUEST_PARAMS_ERROR;
@@ -488,7 +488,7 @@ export default class UserService implements IUserService.IUserServiceAPI {
         return apiResponse(response);
       }
     } catch (e) {
-      console.error(e);
+      logger.error(e);
       response.statusCode = STATUS_CODES.INTERNAL_SERVER_ERROR;
       response.message = ErrorMessageEnum.INTERNAL_ERROR;
       response.data = null;
@@ -526,7 +526,7 @@ export default class UserService implements IUserService.IUserServiceAPI {
     const { id } = req.params;
     const { error, value } = JoiValidate(getSchema, { id: req.params.id });
     if (error) {
-      console.error(error);
+      logger.error(error);
       const paramsError = JoiError(error);
       response.statusCode = STATUS_CODES.UNPROCESSABLE_ENTITY;
       response.message = ErrorMessageEnum.REQUEST_PARAMS_ERROR;
@@ -548,7 +548,7 @@ export default class UserService implements IUserService.IUserServiceAPI {
         return apiResponse(response);
       }
     } catch (e) {
-      console.error(e);
+      logger.error(e);
       response.statusCode = STATUS_CODES.INTERNAL_SERVER_ERROR;
       response.message = ErrorMessageEnum.INTERNAL_ERROR;
       response.data = null;
@@ -559,7 +559,7 @@ export default class UserService implements IUserService.IUserServiceAPI {
     try {
       const { error, value } = JoiValidate(updateSchema, req.body);
       if (error) {
-        console.error(error);
+        logger.error(error);
         const paramsError = JoiError(error);
         response.statusCode = STATUS_CODES.UNPROCESSABLE_ENTITY;
         response.message = ErrorMessageEnum.REQUEST_PARAMS_ERROR;
@@ -580,7 +580,7 @@ export default class UserService implements IUserService.IUserServiceAPI {
       response.error = null;
       return apiResponse(response);
     } catch (e) {
-      console.error(e);
+      logger.error(e);
       response.statusCode = STATUS_CODES.INTERNAL_SERVER_ERROR;
       response.message = ErrorMessageEnum.INTERNAL_ERROR;
       response.data = null;
@@ -611,7 +611,7 @@ export default class UserService implements IUserService.IUserServiceAPI {
 
     const { error, value } = JoiValidate(getSchema, { id: request.params.id });
     if (error) {
-      console.error(error);
+      logger.error(error);
       const paramsError = JoiError(error);
       response.statusCode = STATUS_CODES.UNPROCESSABLE_ENTITY;
       response.message = ErrorMessageEnum.REQUEST_PARAMS_ERROR;
@@ -633,13 +633,13 @@ export default class UserService implements IUserService.IUserServiceAPI {
       }
       await this.userStore.delete(request.params.id);
       response.statusCode = STATUS_CODES.OK;
-      response.error = {};
+      response.error = null;
       response.message = responseMessage.USER_DELETED;
       response.data = user;
       response.status = true;
       return apiResponse(response);
     } catch (e) {
-      console.error(e);
+      logger.error(e);
       response.statusCode = STATUS_CODES.INTERNAL_SERVER_ERROR;
       response.error = toError(e.message);
       response.statusCode = STATUS_CODES.OK;

@@ -26,6 +26,7 @@ import {
   getParsedFile
 } from '../../utils/s3/s3Utility';
 import Pagination from '../../utils/enum/pagination';
+import logger from '../../utils/logger/winston';
 
 export default class uploadService implements IUploadService.IUploadServiceAPI {
   private store = new UploadStore();
@@ -57,7 +58,7 @@ export default class uploadService implements IUploadService.IUploadServiceAPI {
     // Validate request body
     const { error, value } = JoiValidate(createSchema, req.body);
     if (error) {
-      console.error(error);
+      logger.error(error);
       const paramsError = JoiError(error);
       response.statusCode = STATUS_CODES.UNPROCESSABLE_ENTITY;
       response.message = ErrorMessageEnum.REQUEST_PARAMS_ERROR;
@@ -108,7 +109,7 @@ export default class uploadService implements IUploadService.IUploadServiceAPI {
       response.status = true;
       return apiResponse(response);
     } catch (e) {
-      console.error(e);
+      logger.error(e);
       response.statusCode = STATUS_CODES.INTERNAL_SERVER_ERROR;
       response.message = ErrorMessageEnum.INTERNAL_ERROR;
       response.error = toError(e.message);
@@ -138,7 +139,7 @@ export default class uploadService implements IUploadService.IUploadServiceAPI {
     // Validate request body
     const { error, value } = JoiValidate(getSchema, req.query);
     if (error) {
-      console.error(error);
+      logger.error(error);
       const paramsError = JoiError(error);
       response.statusCode = STATUS_CODES.UNPROCESSABLE_ENTITY;
       response.message = ErrorMessageEnum.REQUEST_PARAMS_ERROR;
@@ -163,7 +164,7 @@ export default class uploadService implements IUploadService.IUploadServiceAPI {
       response.status = true;
       return apiResponse(response);
     } catch (e) {
-      console.error(e);
+      logger.error(e);
       response.statusCode = STATUS_CODES.INTERNAL_SERVER_ERROR;
       response.message = ErrorMessageEnum.INTERNAL_ERROR;
       response.error = toError(e.message);
@@ -193,7 +194,7 @@ export default class uploadService implements IUploadService.IUploadServiceAPI {
     // Validate request query parameters
     const { error, value } = JoiValidate(deleteSchema, req.query);
     if (error) {
-      console.error(error);
+      logger.error(error);
       const paramsError = JoiError(error);
       response.statusCode = STATUS_CODES.UNPROCESSABLE_ENTITY;
       response.message = ErrorMessageEnum.REQUEST_PARAMS_ERROR;
@@ -218,7 +219,7 @@ export default class uploadService implements IUploadService.IUploadServiceAPI {
       response.status = true;
       return apiResponse(response);
     } catch (e) {
-      console.error(e);
+      logger.error(e);
       response.statusCode = STATUS_CODES.INTERNAL_SERVER_ERROR;
       response.message = ErrorMessageEnum.INTERNAL_ERROR;
       response.error = toError(e.message);
@@ -245,7 +246,7 @@ export default class uploadService implements IUploadService.IUploadServiceAPI {
     // Validate request query parameters
     const { error, value } = JoiValidate(getParsedFileSchema, req.query);
     if (error) {
-      console.error(error);
+      logger.error(error);
       const paramsError = JoiError(error);
       response.statusCode = STATUS_CODES.UNPROCESSABLE_ENTITY;
       response.message = ErrorMessageEnum.REQUEST_PARAMS_ERROR;
@@ -281,14 +282,14 @@ export default class uploadService implements IUploadService.IUploadServiceAPI {
         res.attachment(filepath);
         s3Stream.pipe(res);
       } catch (e) {
-        console.error(e);
+        logger.error(e);
         response.statusCode = STATUS_CODES.INTERNAL_SERVER_ERROR;
         response.message = ErrorMessageEnum.INTERNAL_ERROR;
         response.error = toError(e.message);
         return apiResponse(response);
       }
     } catch (e) {
-      console.error(e);
+      logger.error(e);
       response.statusCode = STATUS_CODES.INTERNAL_SERVER_ERROR;
       response.message = ErrorMessageEnum.INTERNAL_ERROR;
       response.error = toError(e.message);
