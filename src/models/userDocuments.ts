@@ -5,6 +5,7 @@ export default interface IUSERDOCUMENT extends Document {
   _id?: string;
   user_id?: Schema.Types.ObjectId;
   filepath?: string;
+  name?: string;
   upload_date?: string;
   filesize?: string;
   document_type?: string;
@@ -19,6 +20,10 @@ const UserDocumentSchema: Schema<IUSERDOCUMENT> = new Schema<IUSERDOCUMENT>(
     },
     filepath: {
       type: String
+    },
+    name: {
+      type: String,
+      required: false
     },
     upload_date: {
       type: String
@@ -41,5 +46,6 @@ const UserDocumentSchema: Schema<IUSERDOCUMENT> = new Schema<IUSERDOCUMENT>(
   { timestamps: true }
 );
 
-export const UserDocumentModel = (mongoose.models.userDocuments as mongoose.Model<IUSERDOCUMENT>) ||
-mongoose.model<IUSERDOCUMENT>('userDocuments', UserDocumentSchema);
+export const UserDocumentModel =
+  (mongoose.models.userDocuments as mongoose.Model<IUSERDOCUMENT>) ||
+  mongoose.model<IUSERDOCUMENT>('userDocuments', UserDocumentSchema);

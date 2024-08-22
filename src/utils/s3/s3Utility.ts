@@ -31,7 +31,7 @@ export const uploadToS3 = async (file, folderName) => {
 
   try {
     const data = await s3.upload(params).promise();
-    return data.Key;
+    return { Key: data.Key, name: file.originalname };
   } catch (error) {
     logger.error('Error uploading file:', error);
     throw error;

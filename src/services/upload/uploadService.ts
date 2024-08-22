@@ -95,7 +95,8 @@ export default class uploadService implements IUploadService.IUploadServiceAPI {
       const payload = {
         document_type: value.document_type,
         user_id: req.user._id,
-        filepath: fileUrl,
+        filepath: fileUrl.Key,
+        name: fileUrl.name,
         filesize: req.file.size,
         upload_date: new Date().toISOString(),
         mimetype: req.file.mimetype
