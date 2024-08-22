@@ -29,6 +29,7 @@ export async function verifyAppleToken(idToken: string): Promise<VerifyResult> {
       payload: payload
     };
   } catch (error) {
+    console.log('error: ', error);
     // Return an error object if verification fails
     return {
       valid: false,
